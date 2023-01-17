@@ -1,17 +1,15 @@
-const { MongoClient } = require("mongodb");
-let dbConnection;
+const mongoose = require("mongoose");
+require("dotenv").config();
+mongoose.set('strictQuery', true);
 
-module.exports = {
-    connectDb: (cb) => {
-        MongoClient.connect(process.env.URI)
-            .then((client) => {
-                dbConnection = client.db();
-                return cb()
-            })
-            .catch((err) => {
-                console.log(err);
-                return cb(err)
-            });
-    },
-    getDb: () => dbConnection
+const startServer = async (connectToPort) => {
+    try {
+        await mongoose.connect(process.env.URI);
+        connectToPort()
+        console.log("DB connected")
+    } catch (error) {
+        console.log(error);
+    }
 };
+
+module.exports = startServer
